@@ -241,6 +241,16 @@ Sortie
 
 
 
+## lien utils
+
+https://docs.aws.amazon.com/cli/latest/reference/
+
+https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+
+https://developer.hashicorp.com/terraform/language/functions
+
+
+
 
 
 
