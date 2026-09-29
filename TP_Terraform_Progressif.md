@@ -1945,3 +1945,12 @@ Le template fourni au formateur constitue la **référence fonctionnelle finale*
 | Code Lambda | `lambda_function.py` |
 
 **Consigne finale :** utilisez le template uniquement comme référence de l'état attendu. Le travail consiste à reconstruire progressivement cette architecture et à comprendre chaque notion Terraform introduite.
+
+
+
+## Quelque liens utils
+
+
+https://docs.aws.amazon.com/cli/latest/reference/
+https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+https://developer.hashicorp.com/terraform/language/functions

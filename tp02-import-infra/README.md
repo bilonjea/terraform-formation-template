@@ -161,7 +161,7 @@ No changes. Your infrastructure matches the configuration.
 EC2 existante → import de l'EC2 → plan → correction de la configuration → éventuellement modification des tags.
 
 
-
+# Question
 
 ## Importer plusieurs ressources
 
@@ -202,6 +202,130 @@ Ainsi, Terraform connaît à la fois les ressources existantes et leurs dépenda
 
 > **À retenir :** l'import permet de faire entrer une ressource existante dans le Terraform State. Il ne permet pas d'importer automatiquement toute l'infrastructure associée.
 
+
+
+# drift 
+
+Terraform détecte la différence entre l’état déclaré, le state et l’infrastructure réelle. Il ne faut surtout pas faire apply aveuglément. On commence par analyser le plan, puis on décide quelle est la source de vérité.
+
+
+Terraform
+   │
+   ├── Configuration .tf
+   │       └── "Security Group autorise 443"
+   │
+   ├── Terraform State
+   │       └── état connu par Terraform
+   │
+   └── AWS
+           └── quelqu'un a ajouté une règle de sécurité
+
+
+Terraform peut détecter :
+  ~ aws_security_group.web
+    ingress rules: modification détectée
+
+
+exemple de faille de sécurité
+
+ingress {
+  from_port   = 443
+  to_port     = 443
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+
+
+  Un administrateur modifie directement AWS pour restreindre l'accès à :10.10.0.0/16
+
+
+  Terraform va constater que la configuration .tf ne correspond plus à AWS.
+
+
+  Terraform peut effectivement vouloir rétablir la configuration déclarée dans le .tf.
+
+Que faire ?
+
+Il faut d'abord déterminer :
+
+Est-ce une modification temporaire ou une modification qui doit devenir la nouvelle configuration officielle ?
+
+Cas 1 - La modification manuelle est légitime
+
+Par exemple, l'équipe sécurité a volontairement corrigé une faille.
+
+On ne remet pas immédiatement l'ancienne configuration.
+
+On récupère/analyse le changement : terraform plan
+
+Puis on modifie le code Terraform pour représenter le nouvel état souhaité.
+
+Par exemple :
+
+cidr_blocks = ["10.10.0.0/16"]
+
+
+terraform plan
+terraform apply
+
+
+Cas 2 - La modification manuelle n'est pas autorisée
+
+Si quelqu'un a modifié AWS sans passer par Terraform, et que la configuration Terraform reste volontairement la bonne, alors on peut laisser Terraform réconcilier l'infrastructure.
+
+Mais il faut toujours regarder le plan avant :
+
+terraform plan
+
+et vérifier exactement ce que Terraform va modifier.
+
+
+
+Modification détectée
+        ↓
+terraform plan
+        ↓
+Analyse du drift
+        ↓
+Pourquoi cette modification ?
+        ↓
+       ┌───────────────┐
+       │               │
+       ▼               ▼
+Modification       Modification
+légitime            non légitime
+       │               │
+       ▼               ▼
+Reporter dans      Terraform
+le code Terraform  rétablit l'état
+       │               │
+       └───────┬───────┘
+               ▼
+        terraform plan
+               ↓
+        validation
+               ↓
+        terraform apply
+
+
+Le mieux est d'éviter que les humains modifient directement les ressources gérées par Terraform.
+
+On met en place le principe :
+
+Git → Terraform → CI/CD → AWS
+
+et non :
+
+Git → Terraform → AWS + modifications manuelles AWS
+
+On peut également utiliser lifecycle dans certains cas, notamment :
+
+lifecycle {
+  ignore_changes = [
+    ...
+  ]
+}
+
+Mais ignore_changes n'est pas une solution générale au problème. Il signifie essentiellement à Terraform : « cette propriété peut être modifiée ailleurs, ne cherche pas à la remettre systématiquement à la valeur du code ». Pour une règle de sécurité critique, il faut donc l'utiliser avec beaucoup de discernement.
 
 
 
