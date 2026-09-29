@@ -1,0 +1,7 @@
+student_id        = "stagiaire07"
+resource_suffix   = "jnb"
+aws_region        = "eu-west-1"
+availability_zone = "eu-west-1a"
+ami_id            = "ami-06468be052a4"
+instance_type     = "t3.micro"
+key_pair_name     = ""
