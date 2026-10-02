@@ -86,7 +86,7 @@ aws ec2 run-instances \
 ```bash
 aws ec2 run-instances \
   --region eu-west-1  \
-  --image-id ami-06b9219be654efe2b \
+  --image-id ami-08c7a4b4f234dfa77 \
   --instance-type t3.micro \
   --count 1 \
   --tag-specifications 'ResourceType=instance,Tags=[{Key=Formation,Value=terraform},{Key=Session,Value=TFVPA1-2026-09},{Key=Student,Value=stagiaire07},{Key=ManagedBy,Value=manual}]'
