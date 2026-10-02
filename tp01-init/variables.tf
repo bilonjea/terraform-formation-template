@@ -21,12 +21,12 @@ variable "availability_zone" {
 }
 
 variable "student_id" {
-  description = "Identifiant du stagiaire"
+  description = "Identifiant du student, format student01, student02, etc."
   type        = string
 
   validation {
-    condition     = can(regex("^stagiaire[0-9]{2}$", var.student_id))
-    error_message = "student_id doit être au format stagiaire01, stagiaire02, etc."
+    condition     = can(regex("^student[0-9]{2}$", var.student_id))
+    error_message = "student_id doit être au format student01, student02, etc."
   }
 }
 

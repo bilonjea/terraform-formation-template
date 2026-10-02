@@ -1,4 +1,4 @@
-student_id        = "stagiaire07"
+student_id        = "studentXX"
 resource_suffix   = "jnb"
 aws_region        = "eu-west-1"
 availability_zone = "eu-west-1a"
