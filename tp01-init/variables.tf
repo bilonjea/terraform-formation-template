@@ -5,15 +5,14 @@ variable "aws_region" {
   validation {
     condition = contains([
       "eu-west-3",
+      "eu-west-2",
       "eu-west-1",
-      "eu-central-1",
-      "us-east-1"
+      "eu-central-1"
     ], var.aws_region)
 
     error_message = "Région AWS non autorisée pour cette formation."
   }
 }
-
 variable "availability_zone" {
   description = "Zone de disponibilité"
   type        = string
